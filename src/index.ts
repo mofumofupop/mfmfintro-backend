@@ -1,10 +1,21 @@
 import { Hono } from "hono";
 import { createClient } from "@supabase/supabase-js";
 
-interface CloudflareBindings {
+interface Env {
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
 }
+
+const getEnv = (key: keyof Env): string => {
+  const envFromProcess = (globalThis as unknown as { process?: any }).process
+    ?.env?.[key] as string | undefined;
+
+  const value = envFromProcess;
+  if (!value) {
+    throw new Error(`Missing env: ${String(key)}`);
+  }
+  return value;
+};
 
 type Member = {
   id: number;
@@ -14,7 +25,7 @@ type Member = {
   tw_url: string | null;
 };
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+const app = new Hono();
 
 app.get("/", (c) => {
   return c.json({ message: "API is running" });
@@ -22,8 +33,8 @@ app.get("/", (c) => {
 
 app.post("/api/counter", async (c) => {
   try {
-    const supabaseUrl = c.env.SUPABASE_URL;
-    const supabaseAnonKey = c.env.SUPABASE_ANON_KEY;
+    const supabaseUrl = getEnv("SUPABASE_URL");
+    const supabaseAnonKey = getEnv("SUPABASE_ANON_KEY");
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -60,8 +71,8 @@ app.post("/api/counter", async (c) => {
 
 app.get("/api/members", async (c) => {
   try {
-    const supabaseUrl = c.env.SUPABASE_URL;
-    const supabaseAnonKey = c.env.SUPABASE_ANON_KEY;
+    const supabaseUrl = getEnv("SUPABASE_URL");
+    const supabaseAnonKey = getEnv("SUPABASE_ANON_KEY");
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
