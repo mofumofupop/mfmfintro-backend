@@ -2,17 +2,20 @@
   "name": "mfmfintro-backend",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
-    "format": "prettier --write ./src",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "dev": "tsx watch src/server.ts",
+    "dev:vercel": "vercel dev",
+    "deploy": "vercel deploy --prod",
+    "format": "prettier --write ./src ./api"
   },
   "dependencies": {
+    "@hono/node-server": "^1.14.4",
     "@supabase/supabase-js": "^2.87.1",
     "hono": "^4.10.7"
   },
   "devDependencies": {
+    "dotenv": "^16.6.1",
     "prettier": "^3.7.4",
-    "wrangler": "^4.4.0"
+    "tsx": "^4.19.4",
+    "vercel": "^50.0.0"
   }
 }
